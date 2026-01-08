@@ -8,7 +8,6 @@ import {
   showToast,
 } from '@vicinae/api';
 import { useEffect, useState } from 'react';
-import LayoutPreview from './components/layout-preview';
 import { getZellijLayouts, isZellijInstalled } from './utils/zellij';
 import { getTerminalCommand } from './utils/terminal';
 import type { ZellijLayout } from './types';
@@ -30,11 +29,6 @@ export default function ListLayouts() {
       setZellijInstalled(installed);
 
       if (!installed) {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: 'Zellij not found',
-          message: 'Please install Zellij to use this extension',
-        });
         setLayouts([]);
         return;
       }
@@ -72,26 +66,18 @@ export default function ListLayouts() {
     }
   };
 
-  if (!zellijInstalled) {
-    return (
-      <List>
-        <List.EmptyView
-          title="Zellij Not Found"
-          description="Please install Zellij to use this extension"
-          icon={Icon.Exclamationmark}
-        />
-      </List>
-    );
-  }
-
   return (
-    <List isLoading={isLoading} isShowingDetail={layouts.length > 0}>
+    <List isLoading={isLoading}>
       {layouts.length === 0 ? (
         !isLoading ? (
           <List.EmptyView
-            title="No Layouts Found"
-            description="Add layouts to ~/.config/zellij/layouts to get started"
-            icon={Icon.AppWindowList}
+            title={!zellijInstalled ? 'Zellij Not Found' : 'No Layouts Found'}
+            description={
+              !zellijInstalled
+                ? 'Please install Zellij to use this extension'
+                : 'Add layouts to ~/.config/zellij/layouts to get started'
+            }
+            icon={!zellijInstalled ? Icon.Exclamationmark : Icon.AppWindowList}
           />
         ) : null
       ) : (
@@ -101,7 +87,6 @@ export default function ListLayouts() {
             title={layout.name}
             subtitle={layout.path}
             icon={Icon.AppWindowList}
-            detail={<LayoutPreview layout={layout} />}
             actions={
               <ActionPanel>
                 <Action

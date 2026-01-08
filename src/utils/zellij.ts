@@ -12,27 +12,19 @@ const execAsync = promisify(exec);
  */
 export async function getZellijSessions(): Promise<ZellijSession[]> {
   try {
-    const { stdout } = await execAsync('zellij list-sessions');
+    const { stdout } = await execAsync('zellij list-sessions -s');
     const lines = stdout.trim().split('\n');
 
     const sessions: ZellijSession[] = [];
 
     for (const line of lines) {
-      if (!line.trim()) continue;
+      const name = line.trim();
+      if (!name) continue;
 
-      // Parse zellij list-sessions output
-      // Format is typically: session-name (ATTACHED) or session-name
-      const match = line.match(/^(.+?)(\s+\(ATTACHED\))?$/);
-      if (match) {
-        const name = match[1].trim();
-        const isAttached = !!match[2];
-
-        sessions.push({
-          name,
-          isAttached,
-          createdAt: Date.now(), // Zellij doesn't provide creation time easily
-        });
-      }
+      sessions.push({
+        name,
+        createdAt: Date.now(),
+      });
     }
 
     return sessions;

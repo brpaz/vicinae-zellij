@@ -8,7 +8,6 @@ import {
   showToast,
 } from '@vicinae/api';
 import { useEffect, useState } from 'react';
-import SessionPreview from './components/session-preview';
 import { getZellijSessions, isZellijInstalled } from './utils/zellij';
 import { getTerminalCommand } from './utils/terminal';
 import type { ZellijSession } from './types';
@@ -30,11 +29,6 @@ export default function ListSessions() {
       setZellijInstalled(installed);
 
       if (!installed) {
-        await showToast({
-          style: Toast.Style.Failure,
-          title: 'Zellij not found',
-          message: 'Please install Zellij to use this extension',
-        });
         setSessions([]);
         return;
       }
@@ -89,26 +83,18 @@ export default function ListSessions() {
     }
   };
 
-  if (!zellijInstalled) {
-    return (
-      <List>
-        <List.EmptyView
-          title="Zellij Not Found"
-          description="Please install Zellij to use this extension"
-          icon={Icon.Exclamationmark}
-        />
-      </List>
-    );
-  }
-
   return (
-    <List isLoading={isLoading} isShowingDetail={sessions.length > 0}>
+    <List isLoading={isLoading}>
       {sessions.length === 0 ? (
         !isLoading ? (
           <List.EmptyView
-            title="No Sessions Found"
-            description="Create a new Zellij session to get started"
-            icon={Icon.Terminal}
+            title={!zellijInstalled ? 'Zellij Not Found' : 'No Sessions Found'}
+            description={
+              !zellijInstalled
+                ? 'Please install Zellij to use this extension'
+                : 'Create a new Zellij session to get started'
+            }
+            icon={!zellijInstalled ? Icon.Exclamationmark : Icon.Terminal}
           />
         ) : null
       ) : (
@@ -116,9 +102,7 @@ export default function ListSessions() {
           <List.Item
             key={session.name}
             title={session.name}
-            subtitle={session.isAttached ? 'Attached' : 'Detached'}
-            icon={session.isAttached ? Icon.CircleFilled : Icon.Circle}
-            detail={<SessionPreview session={session} />}
+            icon={Icon.Terminal}
             actions={
               <ActionPanel>
                 <Action
