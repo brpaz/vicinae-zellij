@@ -1,18 +1,18 @@
+import { exec } from 'node:child_process';
+import { promisify } from 'node:util';
 import {
   Action,
   ActionPanel,
+  closeMainWindow,
   Icon,
   List,
-  Toast,
-  closeMainWindow,
   showToast,
+  Toast,
 } from '@vicinae/api';
 import { useEffect, useState } from 'react';
-import { getZellijLayouts, isZellijInstalled } from './utils/zellij';
-import { getTerminalCommand } from './utils/terminal';
 import type { ZellijLayout } from './types';
-import { exec } from 'node:child_process';
-import { promisify } from 'node:util';
+import { getTerminalCommand } from './utils/terminal';
+import { getZellijLayouts, isZellijInstalled } from './utils/zellij';
 
 const execAsync = promisify(exec);
 

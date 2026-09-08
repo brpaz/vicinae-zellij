@@ -1,8 +1,8 @@
 import { exec } from 'node:child_process';
-import { promisify } from 'node:util';
 import { readdir } from 'node:fs/promises';
-import { join } from 'node:path';
 import { homedir } from 'node:os';
+import { join } from 'node:path';
+import { promisify } from 'node:util';
 import type { ZellijLayout, ZellijSession } from '../types';
 
 const execAsync = promisify(exec);
@@ -66,10 +66,7 @@ export async function getZellijLayouts(): Promise<ZellijLayout[]> {
           });
         }
       }
-    } catch {
-      // Directory doesn't exist or is not readable, continue
-      continue;
-    }
+    } catch {}
   }
 
   return layouts;
